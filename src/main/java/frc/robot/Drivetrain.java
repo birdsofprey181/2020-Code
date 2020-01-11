@@ -8,7 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Drivetrain{
-
+    /*
     private DifferentialDrive drive;
     private CANSparkMax motorL, motorR;
     private static final int leftID = 1; 
@@ -16,7 +16,7 @@ public class Drivetrain{
     
     motorL=new CANSparkMax(leftID, MotorType.kBrushless);
     motorR=new CANSparkMax(rightID, MotorType.kBrushless);
-
+    */
     public void resetEnc(int port){
         //reset encoder in x port
     }
