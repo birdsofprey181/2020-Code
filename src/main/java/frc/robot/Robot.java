@@ -27,11 +27,11 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private VictorSP testMotor = new VictorSP(7);
-  private Encoder enc = new Encoder(8, 9, true, Encoder.EncodingType.k4X);
-  private double kP=0.1;
+  private Encoder enc = new Encoder(9, 8, true, Encoder.EncodingType.k4X);
+  private double kP=0.05;
   private double wantRPM;
-  private Timer timer1=new Timer();
   private String rpmDash;
+  private double rpm=0;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     enc.reset();
+    rpm=0;
   }
 
   /**
@@ -95,24 +96,18 @@ public class Robot extends TimedRobot {
    * This function is called periodically during operator control.
    */
   @Override
+  public void teleopInit(){
+    double teleStart=Timer.getFPGATimestamp();
+  }
+  @Override
   public void teleopPeriodic() {
-    double time=timer1.getFPGATimestamp();
-    double rpm=0;
-    if(time==1){
-      rpm=enc.getDistance()*60;
-      enc.reset();
-      timer1.reset();
-    }else if(time>1){
-      timer1.reset();
-    }
-    System.out.println(enc.getRate()+", "+rpm);
-    //encoder 8 and 9
-    //motor = 7
     //wheels are 8"
+    
+    rpm=(enc.getRate()/6);
+    System.out.println(rpm);
     wantRPM=50;
-    double er=wantRPM-rpm;
-    double speed=kP*er;
-    testMotor.setSpeed(speed);
+    double speed=kP*(wantRPM-rpm);
+    testMotor.setSpeed(speed);   
 
   }
 
@@ -121,5 +116,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    System.out.println(enc.getDistance());
   }
 }
