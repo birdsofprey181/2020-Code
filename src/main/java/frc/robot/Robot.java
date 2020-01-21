@@ -97,18 +97,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit(){
-    double teleStart=Timer.getFPGATimestamp();
+    //double teleStart=Timer.getFPGATimestamp();
   }
   @Override
   public void teleopPeriodic() {
     //wheels are 8"
+
     
     rpm=(enc.getRate()/6);
     System.out.println(rpm);
     wantRPM=50;
     double speed=kP*(wantRPM-rpm);
-    testMotor.setSpeed(speed);   
-
+    testMotor.setSpeed(speed);  
   }
 
   /**
