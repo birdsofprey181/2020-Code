@@ -26,12 +26,9 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  private VictorSP testMotor = new VictorSP(7);
   private Encoder enc = new Encoder(9, 8, true, Encoder.EncodingType.k4X);
-  private double kP=0.05;
-  private double wantRPM;
-  private String rpmDash;
-  private double rpm=0;
+  
+  //private static VictorSP testMotor = new VictorSP(7);
 
   /**
    * This function is run when the robot is first started up and should be
@@ -43,7 +40,6 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     enc.reset();
-    rpm=0;
   }
 
   /**
@@ -102,13 +98,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //wheels are 8"
-
-    
-    rpm=(enc.getRate()/6);
-    System.out.println(rpm);
-    wantRPM=50;
-    double speed=kP*(wantRPM-rpm);
-    testMotor.setSpeed(speed);  
+    Shooter.shootAtRPM(1200, enc);     
   }
 
   /**
@@ -116,6 +106,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    System.out.println(enc.getDistance());
+    System.out.println(enc.getRate()/6);
+    //testMotor.setSpeed(0.5);
   }
 }
