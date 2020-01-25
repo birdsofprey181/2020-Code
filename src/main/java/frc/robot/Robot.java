@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Joystick;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,6 +27,8 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private Encoder enc = new Encoder(9, 8, true, Encoder.EncodingType.k4X);
+  private Joystick driveStick=new Joystick(0);
+  private Joystick opStick=new Joystick(1);
   
   //private static VictorSP testMotor = new VictorSP(7);
 
@@ -96,8 +99,9 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void teleopPeriodic() {
-    //wheels are 8"
-    Shooter.shootAtRPM(1200, enc);     
+    Drivetrain.move(driveStick.getX(), driveStick.getY());
+    Intake.leftBin(opStick.getRawButton(7));
+    Intake.rightBin(opStick.getRawButton(8));
   }
 
   /**
@@ -106,6 +110,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     System.out.println(enc.getRate()/6);
+    Shooter.shootAtRPM(1200, enc);  
     //testMotor.setSpeed(0.5);
   }
 }
