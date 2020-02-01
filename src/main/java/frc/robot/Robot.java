@@ -8,9 +8,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import edu.wpi.first.wpilibj.VictorSP;
+//import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -70,8 +71,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    Shooter.lastError=0.0;
   }
 
   /**
@@ -96,6 +98,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit(){
     //double teleStart=Timer.getFPGATimestamp();
+    Shooter.setLastTimeStamp();
+    Shooter.lastError=0.0;
   }
   @Override
   public void teleopPeriodic() {
@@ -110,7 +114,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     System.out.println(enc.getRate()/6);
-    Shooter.shootAtRPM(1200, enc);  
+    //Shooter.shootAtRPM(1200, enc);  
     //testMotor.setSpeed(0.5);
   }
 }
