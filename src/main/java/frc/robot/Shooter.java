@@ -27,8 +27,8 @@ public class Shooter {
 
     public static void shootAtRPM(double wantRPM, Encoder enc){
         double dt=Timer.getFPGATimestamp() - Shooter.lastTimeStamp; //sets the difference between the current time and last recorded time
-        rpm=(enc.getRate()/6); //
-        double error=wantRPM-rpm;
+        rpm=(enc.getRate()/6); //sets current rpm: getRate() is degrees per second
+        double error=wantRPM-rpm; //the difference between wanted and current rpm
         if(Math.abs(errorSum)<iLimit)
         errorSum+=error*dt*50;
         double errorRate=(error-lastError)/dt;

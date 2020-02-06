@@ -11,9 +11,15 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 //import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
+
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorSensorV3;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -33,6 +39,14 @@ public class Robot extends TimedRobot {
   private Encoder enc = new Encoder(9, 8, true, Encoder.EncodingType.k4X);
   private Joystick driveStick=new Joystick(0);
   private Joystick opStick=new Joystick(1);
+  private final I2C.Port i2cPort=I2C.Port.kOnboard;
+  private final ColorSensorV3 m_colorSensor=new ColorSensorV3(i2cPort);
+  private final ColorMatch m_colorMatcher=new ColorMatch();
+  private final Color kBlueTarget=ColorMatch.makeColor(0.143,0.427,0.429);
+  private final Color kGreenTarget=ColorMatch.makeColor(0.197,0.561,0.240);
+  private final Color kRedTarget=ColorMatch.makeColor(0.561,0.232,0.114);
+  private final Color kYellowTarget=ColorMatch.makeColor(0.361,0.524,0.113);
+
   
   //private static VictorSP testMotor = new VictorSP(7);
 
@@ -46,6 +60,11 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     enc.reset();
+
+    m_colorMatcher.addColorMatch(kBlueTarget);
+    m_colorMatcher.addColorMatch(kGreenTarget);
+    m_colorMatcher.addColorMatch(kRedTarget);
+    m_colorMatcher.addColorMatch(kYellowTarget);
   }
 
   /**
