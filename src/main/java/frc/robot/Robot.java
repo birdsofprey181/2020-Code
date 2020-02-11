@@ -8,7 +8,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -36,9 +35,12 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
   private Encoder enc = new Encoder(9, 8, true, Encoder.EncodingType.k4X);
+
   private Joystick driveStick=new Joystick(0);
   private Joystick opStick=new Joystick(1);
+
   private final I2C.Port i2cPort=I2C.Port.kOnboard;
   private final ColorSensorV3 m_colorSensor=new ColorSensorV3(i2cPort);
   private final ColorMatch m_colorMatcher=new ColorMatch();
@@ -117,14 +119,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
+    if(Turret.lockedOn()==false){
+      Turret.turnTur(0.0, 0.0);
+    }else{
+      //double rpm=retireving distance from limelight and comparing to rpm needed for that speed;
+      //TODO: measure rpm vs distance launched and create equation
+      Shooter.shootAtRPM(1200, enc);
     }
   }
 
