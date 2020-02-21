@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
-//import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
@@ -46,9 +46,6 @@ public class Robot extends TimedRobot {
   private final Color kGreenTarget=ColorMatch.makeColor(0.197,0.561,0.240);
   private final Color kRedTarget=ColorMatch.makeColor(0.561,0.232,0.114);
   private final Color kYellowTarget=ColorMatch.makeColor(0.361,0.524,0.113);
-
-  
-  //private static VictorSP testMotor = new VictorSP(7);
 
   /**
    * This function is run when the robot is first started up and should be
@@ -140,8 +137,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Drivetrain.move(driveStick.getX(), driveStick.getY());
-    Intake.leftBin(opStick.getRawButton(7));
-    Intake.rightBin(opStick.getRawButton(8));
+    //Intake.leftBin(opStick.getRawButton(7));
+    //Intake.rightBin(opStick.getRawButton(8));
+    //Lift.move(input here);
+    Intake.intakeRead(opStick);
+    Intake.controlIntake(opStick);
   }
 
   /**

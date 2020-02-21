@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 import com.revrobotics.CANSparkMax;
@@ -12,8 +13,11 @@ public class Drivetrain{
     private static final int leftID = 1;
     private static final int rightID=2;
 
-    private static CANSparkMax motorL=new CANSparkMax(leftID, MotorType.kBrushless);
-    private static CANSparkMax motorR=new CANSparkMax(rightID, MotorType.kBrushless);
+    //private static CANSparkMax motorL=new CANSparkMax(leftID, MotorType.kBrushless);
+    //private static CANSparkMax motorR=new CANSparkMax(rightID, MotorType.kBrushless);
+
+    private static VictorSP motorL=new VictorSP(0);
+    private static VictorSP motorR=new VictorSP(1);
 
     private static DifferentialDrive drive=new DifferentialDrive(motorL, motorR);
     
