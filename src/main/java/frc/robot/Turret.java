@@ -36,7 +36,7 @@ public class Turret {
         maxRPM=5700;
     }
 
-    public static void setPIController(){
+public static void setPIDController(){
         turPID.setP(kP);
         turPID.setI(kI);
         turPID.setD(kD);
