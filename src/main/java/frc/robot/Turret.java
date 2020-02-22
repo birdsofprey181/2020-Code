@@ -8,16 +8,18 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Shooter {
+public class Turret {
     private static final int turID=3;
+    
     public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
-    public static double p,i,d,iz,ff,max,min;
+    public static double p,i,d,iz,ff,max,min,rotations;
 
     private static CANSparkMax turMotor;
     private static CANPIDController turPID;
     private static CANEncoder turEnc;
 
     public static void setTurMotor(){
+        turMotor.restoreFactoryDefaults();
         turMotor=new CANSparkMax(turID, MotorType.kBrushless);
         turPID=turMotor.getPIDController();
         turEnc=turMotor.getEncoder();
@@ -44,23 +46,25 @@ public class Shooter {
     }
 
     public static void putPIDOnSmart(){
-        SmartDashboard.putNumber("P Gain", kP);
-        SmartDashboard.putNumber("I Gain", kI);
-        SmartDashboard.putNumber("D Gain", kD);
-        SmartDashboard.putNumber("I Zone", kIz);
-        SmartDashboard.putNumber("Feed Forward", kFF);
-        SmartDashboard.putNumber("Max Output", kMaxOutput);
-        SmartDashboard.putNumber("Min Output", kMinOutput);
+        SmartDashboard.putNumber("Tur P Gain", kP);
+        SmartDashboard.putNumber("Tur I Gain", kI);
+        SmartDashboard.putNumber("Tur D Gain", kD);
+        SmartDashboard.putNumber("Tur I Zone", kIz);
+        SmartDashboard.putNumber("Tur Feed Forward", kFF);
+        SmartDashboard.putNumber("Tur Max Output", kMaxOutput);
+        SmartDashboard.putNumber("Tur Min Output", kMinOutput);
+        SmartDashboard.putNumber("Tur Set Rotations", 0);
     }
 
     public static void getFromDash(){
-        p=SmartDashboard.getNumber("P Gain", 0);
-        i=SmartDashboard.getNumber("I Gain", 0);
-        d=SmartDashboard.getNumber("D Gain", 0);
-        iz=SmartDashboard.getNumber("I Zone", 0);
-        ff=SmartDashboard.getNumber("Feed Forward", 0);
-        max=SmartDashboard.getNumber("Max Output", 0);
-        min=SmartDashboard.getNumber("Min Output", 0);
+        p=SmartDashboard.getNumber("Tur P Gain", 0);
+        i=SmartDashboard.getNumber("Tur I Gain", 0);
+        d=SmartDashboard.getNumber("Tur D Gain", 0);
+        iz=SmartDashboard.getNumber("Tur I Zone", 0);
+        ff=SmartDashboard.getNumber("Tur Feed Forward", 0);
+        max=SmartDashboard.getNumber("Tur Max Output", 0);
+        min=SmartDashboard.getNumber("Tur Min Output", 0);
+        rotations = SmartDashboard.getNumber("Tur Set Rotations", 0);
     }
 
     public static void setFromDash(){
@@ -91,11 +95,10 @@ public class Shooter {
         }
     }
 
-    public static void controlTur(double inRPM){
-        double setPoint = inRPM*maxRPM;
-        turPID.setReference(setPoint, ControlType.kVelocity);
+    public static void controlTur(double pos){
+        turPID.setReference(pos, ControlType.kPosition);
         
-        SmartDashboard.putNumber("SetPoint", setPoint);
-        SmartDashboard.putNumber("ProcessVariable", turEnc.getVelocity());
+        SmartDashboard.putNumber("Tur SetPoint", rotations);
+        SmartDashboard.putNumber("Tur ProcessVariable", turEnc.getPosition());
     }
 }
