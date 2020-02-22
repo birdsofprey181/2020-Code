@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Intake{
     //I don't know what this is below but its kinda cool and a template for later?
-    private static final int leftID=3;
-    private static final int rightID=4;
+    //private static final int leftID=3;
+    //private static final int rightID=4;
 
-    private static CANSparkMax leftIn=new CANSparkMax(leftID, MotorType.kBrushless);
-    private static CANSparkMax rightIn=new CANSparkMax(rightID, MotorType.kBrushless);
+    private static CANSparkMax leftIn=new CANSparkMax(3, MotorType.kBrushless);
+    private static CANSparkMax rightIn=new CANSparkMax(4, MotorType.kBrushless);
     /*
     public static void leftBin(boolean b1){if(b1){leftIn.set(0.5);}else{leftIn.set(0);}}
     public static void rightBin(boolean b1){if(b1){rightIn.set(0.5);}else{rightIn.set(0);}}
@@ -35,7 +35,7 @@ public class Intake{
         }else{
             intakeWheels.set(0);
         }
-    }
+    }   
 
     public static void intakeRead(Joystick opStick){
         int povValue = opStick.getPOV(0);

@@ -106,7 +106,6 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
-    Shooter.lastError=0.0;
   }
 
   /**
@@ -130,9 +129,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit(){
-    //double teleStart=Timer.getFPGATimestamp();
-    Shooter.setLastTimeStamp();
-    Shooter.lastError=0.0;
   }
   @Override
   public void teleopPeriodic() {
