@@ -47,6 +47,8 @@ public class Robot extends TimedRobot {
   private final Color kRedTarget=ColorMatch.makeColor(0.561,0.232,0.114);
   private final Color kYellowTarget=ColorMatch.makeColor(0.361,0.524,0.113);
 
+  private static double rpm;
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -62,6 +64,16 @@ public class Robot extends TimedRobot {
     m_colorMatcher.addColorMatch(kGreenTarget);
     m_colorMatcher.addColorMatch(kRedTarget);
     m_colorMatcher.addColorMatch(kYellowTarget);
+
+    Turret.setTurMotor();
+    Turret.setPIDVariables();
+    Turret.setPIDController();
+    Turret.putPIDOnSmart();
+
+    Launcher.setLaunMotor();
+    Launcher.setPIDVariables();
+    Launcher.setPIDController();
+    Launcher.putPIDOnSmart();
   }
 
   /**
@@ -88,6 +100,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
+
+    SmartDashboard.putNumber("Launcher RPM%", rpm);
   }
 
   /**
@@ -132,10 +146,11 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void teleopPeriodic() {
+    Turret.getFromDash();
+    //Turret.controlTur(pos);
+    Launcher.getFromDash();
+    //Launcher.controlLaun(inRPM);
     Drivetrain.move(driveStick.getX(), driveStick.getY());
-    //Intake.leftBin(opStick.getRawButton(7));
-    //Intake.rightBin(opStick.getRawButton(8));
-    //Lift.move(input here);
     Intake.intakeRead(opStick);
     Intake.controlIntake(opStick);
   }
@@ -144,9 +159,14 @@ public class Robot extends TimedRobot {
    * This function is called periodically during test mode.
    */
   @Override
-  public void testPeriodic() {
-    System.out.println(enc.getRate()/6);
-    //Shooter.shootAtRPM(1200, enc);  
-    //testMotor.setSpeed(0.5);
+  public void testPeriodic() {    
+    Turret.getFromDash();
+    //Turret.controlTur(pos);
+    double locRPM=SmartDashboard.getNumber("Launcher RPM%", 0);
+    if(locRPM != rpm){
+      rpm=locRPM; 
+    }
+    Launcher.getFromDash();
+    Launcher.controlLaun(rpm);
   }
 }

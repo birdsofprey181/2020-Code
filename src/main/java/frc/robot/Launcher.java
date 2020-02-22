@@ -93,8 +93,8 @@ public class Launcher {
         }
     }
 
-    public static void controlLaun(double inRPM){
-        double setPoint=inRPM*maxRPM;
+    public static void controlLaun(double rpmPer){
+        double setPoint=rpmPer*maxRPM;
         launPID.setReference(setPoint, ControlType.kVelocity);
         
         SmartDashboard.putNumber("SetPoint", setPoint);
