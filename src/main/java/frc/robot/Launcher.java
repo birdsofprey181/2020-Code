@@ -9,20 +9,23 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Launcher {
-    private static final int launID=3;
+    private static final int launID=1;
     
-    public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
+    public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput,maxRPM;
     public static double p,i,d,iz,ff,max,min;
 
-    private static CANSparkMax launMotor;
+    public static CANSparkMax launMotor;
     private static CANPIDController launPID;
     private static CANEncoder launEnc;
 
     public static void setLaunMotor(){
-        launMotor.restoreFactoryDefaults();
         launMotor=new CANSparkMax(launID, MotorType.kBrushless);
         launPID=launMotor.getPIDController();
         launEnc=launMotor.getEncoder();
+    }
+
+    public static void resetLaunEnc(){
+        launEnc.setPosition(0);
     }
 
     public static void setPIDVariables(){
@@ -33,7 +36,7 @@ public class Launcher {
         kFF=0.000015; 
         kMaxOutput=1; 
         kMinOutput=-1;
-        maxRPM=5700;
+        maxRPM=5800;
     }
 
     public static void setPIDController(){

@@ -9,20 +9,23 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Turret {
-    private static final int turID=3;
+    private static final int turID=2;
     
     public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
     public static double p,i,d,iz,ff,max,min,rotations;
 
-    private static CANSparkMax turMotor;
+    public static CANSparkMax turMotor;
     private static CANPIDController turPID;
     private static CANEncoder turEnc;
 
     public static void setTurMotor(){
-        turMotor.restoreFactoryDefaults();
         turMotor=new CANSparkMax(turID, MotorType.kBrushless);
         turPID=turMotor.getPIDController();
         turEnc=turMotor.getEncoder();
+    }
+
+    public static void resetTurEnc(){
+        turEnc.setPosition(0);
     }
 
     public static void setPIDVariables(){
