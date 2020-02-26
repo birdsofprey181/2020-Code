@@ -5,6 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+//FRC Birds Of Prey 181
 //Gwen Miller 2020
 package frc.robot;
 
@@ -94,12 +95,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    if(Turret.lockedOn()==false){
-      Turret.turnTur(0.0, 0.0);
-    }else{
-      //double rpm=retireving distance from limelight and comparing to rpm needed for that speed;
-      //TODO: measure rpm vs distance launched and create equation
-      Shooter.shootAtRPM(1200, enc);
+    switch (m_autoSelected) {
+      case kCustomAuto:
+        // Put custom auto code here
+        break;
+      case kDefaultAuto:
+      default:
+        // Put default auto code here
+        break;
     }
   }
 
