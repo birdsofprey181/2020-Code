@@ -128,6 +128,8 @@ public class Robot extends TimedRobot {
     Intake.moveHopper(opStick.getRawButton(11));
 
     Drivetrain.move(driveStick.getY(), driveStick.getZ());
+
+    Elevator.controlLock(opStick.getRawButton(12));
   }
 
   @Override
