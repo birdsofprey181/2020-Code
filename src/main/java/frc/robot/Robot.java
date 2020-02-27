@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
 
   private Joystick driveStick=new Joystick(0);
   private Joystick opStick=new Joystick(1);
-
+  /*
   private final I2C.Port i2cPort=I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor=new ColorSensorV3(i2cPort);
   private final ColorMatch colorMatcher=new ColorMatch();
@@ -39,17 +39,17 @@ public class Robot extends TimedRobot {
   private final Color kGreenTarget=ColorMatch.makeColor(0.197,0.561,0.240);
   private final Color kRedTarget=ColorMatch.makeColor(0.561,0.232,0.114);
   private final Color kYellowTarget=ColorMatch.makeColor(0.361,0.524,0.113);
-
+  */
   @Override
   public void robotInit() {
     m_chooser.setDefaultOption("Do Nothing", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    colorMatcher.addColorMatch(kBlueTarget);
-    colorMatcher.addColorMatch(kGreenTarget);
-    colorMatcher.addColorMatch(kRedTarget);
-    colorMatcher.addColorMatch(kYellowTarget);
+    //colorMatcher.addColorMatch(kBlueTarget);
+    //colorMatcher.addColorMatch(kGreenTarget);
+    //colorMatcher.addColorMatch(kRedTarget);
+    //colorMatcher.addColorMatch(kYellowTarget);
     
     Turret.setTurMotor();
     Turret.turMotor.restoreFactoryDefaults();
@@ -108,6 +108,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit(){
+    Launcher.resetLaunEnc();
+    Turret.resetTurEnc();
   }
   @Override
   public void teleopPeriodic() {
@@ -115,8 +117,10 @@ public class Robot extends TimedRobot {
     Launcher.getFromDash();
 
     Elevator.controlEle(opStick.getRawButton(1), opStick.getY());
-    Intake.intakeWrist(opStick.getRawButton(1), opStick.getY());
-    Intake.intakeWheels(opStick.getRawButton(7), 1);
+    Intake.intakeRead(opStick);
+    Intake.controlIntake(opStick);
+    //Intake.intakeWrist(opStick.getRawButton(1), opStick.getY());
+    Intake.intakeWheels(opStick.getRawButton(7));
 
     if(opStick.getRawButton(2)){
       Launcher.controlLaun((opStick.getThrottle()/2)+0.5);
@@ -127,7 +131,7 @@ public class Robot extends TimedRobot {
     Intake.moveConvey(opStick.getRawButton(9));
     Intake.moveHopper(opStick.getRawButton(11));
 
-    Drivetrain.move(driveStick.getY(), driveStick.getZ());
+    Drivetrain.move(-driveStick.getY(), driveStick.getZ());
 
     Elevator.controlLock(opStick.getRawButton(12));
   }

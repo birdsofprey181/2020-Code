@@ -14,10 +14,10 @@ public class Intake{
     //I don't know what this is below but its kinda cool and a template for later?
     //private static final int leftID=3;
     //private static final int rightID=4;
-
+    /*
     private static CANSparkMax leftIn=new CANSparkMax(2, MotorType.kBrushless);
     private static CANSparkMax rightIn=new CANSparkMax(3, MotorType.kBrushless);
-    /*
+    
     public static void leftBin(boolean b1){if(b1){leftIn.set(0.5);}else{leftIn.set(0);}}
     public static void rightBin(boolean b1){if(b1){rightIn.set(0.5);}else{rightIn.set(0);}}
     */
@@ -33,32 +33,32 @@ public class Intake{
     private static int position = 0;
 
     public static void moveConvey(boolean b){
-        if(b==true){
-            conveyMotor.set(1);
+        if(b){
+            conveyMotor.set(-1);
         }else{
             conveyMotor.set(0);
         }
     }
 
     public static void moveHopper(boolean b){
-        if(b==true){
-            conveyMotor.set(1);
+        if(b){
+            hopperMotor.set(-1);
         }else{
-            conveyMotor.set(0);
+            hopperMotor.set(0);
         }
     }
 
     public static void intakeWrist(boolean b1, double d1){
-        if(!b1){
+        if(b1){
             intakeWrist.set(d1);
         }else{
             intakeWrist.set(0);
         }
     }
 
-    public static void intakeWheels(boolean b1, double d1){
-        if(!b1){
-            intakeWheels.set(d1);
+    public static void intakeWheels(boolean b1){
+        if(b1){
+            intakeWheels.set(-1);
         }else{
             intakeWheels.set(0);
         }
@@ -82,9 +82,9 @@ public class Intake{
     public static void controlIntake(Joystick opStick) {
         int povValue = opStick.getPOV(0);
         if (povValue == 0) {
-            intakeWrist(false, 1.0);
+            intakeWrist(true, 0.8);
         } else if (povValue == 180) {
-            intakeWrist(false, -1.0); 
+            intakeWrist(true, -1.0); 
         } else if (povValue == -1) {
             intakeWrist(false, 0.0);
         }
