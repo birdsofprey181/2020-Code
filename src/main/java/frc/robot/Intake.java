@@ -34,7 +34,7 @@ public class Intake{
 
     public void moveConvey(boolean b){
         if(b){
-            conveyMotor.set(-0.5);
+            conveyMotor.set(-0.75);
         }else{
             conveyMotor.set(0);
         }
@@ -84,7 +84,7 @@ public class Intake{
         if (povValue == 0) {
             intakeWrist(true, -1);
         } else if (povValue == 180) {
-            intakeWrist(true, 0.8); 
+            intakeWrist(true, 1); 
         } else if (povValue == -1) {
             intakeWrist(false, 0.0);
         }

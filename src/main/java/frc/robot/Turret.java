@@ -4,6 +4,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -19,7 +20,7 @@ public class Turret {
 
     public CANSparkMax turMotor;
     private CANPIDController turPID;
-    private CANEncoder turEnc;
+    public CANEncoder turEnc;
 
     NetworkTable vision_table = NetworkTableInstance.getDefault().getTable("limelight");
 
@@ -34,9 +35,14 @@ public class Turret {
     //public static final double 
 
     public void setTurMotor(){
-        turMotor=new CANSparkMax(turID, MotorType.kBrushless);
+        turMotor=new CANSparkMax(2, MotorType.kBrushless);
         turPID=turMotor.getPIDController();
         turEnc=turMotor.getEncoder();
+        turEnc.setPosition(0);
+        turMotor.setSoftLimit(SoftLimitDirection.kForward, 15);
+        turMotor.setSoftLimit(SoftLimitDirection.kReverse, -170);
+        turMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+        turMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     }
 
     public void resetTurEnc(){
@@ -149,11 +155,13 @@ public void setPIDController(){
             output+=(error-lastError)*kD;
         }
         lastError=error;
-        output=Math.max(-1, Math.min(output,1));
+        output=Math.max(-0.2, Math.min(output,0.2));
         return(output);
     }
 
     public void autoTur(){
-        dumbTurn(calcOut());
+        double d1=calcOut();
+        dumbTurn(d1);
+        System.out.println("Turret Output: "+d1);
     }
 }

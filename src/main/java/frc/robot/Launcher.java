@@ -18,17 +18,19 @@ public class Launcher {
     public CANSparkMax launMotor;
     private CANPIDController launPID;
     public CANEncoder launEnc;
+    private double power;
 
     public void setLaunMotor(){
-        launMotor=new CANSparkMax(launID, MotorType.kBrushless);
+        launMotor=new CANSparkMax(1, MotorType.kBrushless);
         launMotor.setIdleMode(IdleMode.kCoast);
+        launMotor.setSmartCurrentLimit(80);
         launPID=launMotor.getPIDController();
-        launPID.setSmartMotionMaxAccel(-200, 0);
-        launPID.setP(0.001);
-        launPID.setD(0.005);
-        launPID.setFF(0.00158);
-        launPID.setDFilter(0.08);
-        launPID.setSmartMotionMaxVelocity(10000, 0);
+        //launPID.setP(0.000135);
+        //launPID.setD(0.0005);
+        launPID.setP(0);
+        launPID.setD(0);
+        launPID.setFF(0.000158);
+        launPID.setDFilter(1);
         launEnc=launMotor.getEncoder();
     }
 
@@ -114,9 +116,11 @@ public class Launcher {
     }
     */
 
-    public void dumbLaunch(boolean b1){
+    public void dumbLaunch(boolean b1, double d1){
+        double launPow=3000+(d1*2000);
         if(b1){
-            launPID.setReference(-5000, ControlType.kSmartMotion);
+            launPID.setReference(-launPow, ControlType.kVelocity);
+            System.out.println("Launcher Power: "+launPow);
             //launMotor.
         }else{
             launPID.setReference(0, ControlType.kDutyCycle);

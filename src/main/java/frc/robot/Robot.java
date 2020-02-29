@@ -95,6 +95,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
 
+    System.out.println(turret.turEnc.getPosition());
+    System.out.println("Z: "+opStick.getZ());
+    System.out.println("T: "+opStick.getThrottle());
     //SmartDashboard.putNumber("launcher RPM%", rpm);
   }
 
@@ -142,16 +145,16 @@ public class Robot extends TimedRobot {
     }
     */
 
-    launcher.dumbLaunch(opStick.getRawButton(2));
+    launcher.dumbLaunch(opStick.getRawButton(2), (-opStick.getThrottle()/2)+0.5);
     System.out.println("Velocity: "+launcher.launEnc.getVelocity());
 
-    if(opStick.getRawButton(9999999)){
+    if(opStick.getRawButton(5)){
       vision.ledOn();
       turret.autoTur();  
     }else{
       vision.ledOff();
-      if(Math.abs(opStick.getZ())>0.12){
-        turret.dumbTurn(opStick.getZ());
+      if(Math.abs(opStick.getZ())>0.3){
+        turret.dumbTurn(-opStick.getZ());
       }else{
         turret.dumbTurn(0);
       }
