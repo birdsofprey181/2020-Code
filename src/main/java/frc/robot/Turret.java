@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Turret {
     private static final int turID=2;
     
-    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+    //public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
     public double p,i,d,iz,ff,max,min,rotations;
 
     public CANSparkMax turMotor;
@@ -26,6 +26,13 @@ public class Turret {
     NetworkTableEntry tarValid = vision_table.getEntry("tv");
     NetworkTableEntry tarOff = vision_table.getEntry("tx");
 
+    Vision vision =new Vision();
+    double lastError=0;
+
+    public static final double kP=0.001;
+    public static final double kD=0.013;
+    //public static final double 
+
     public void setTurMotor(){
         turMotor=new CANSparkMax(turID, MotorType.kBrushless);
         turPID=turMotor.getPIDController();
@@ -35,7 +42,7 @@ public class Turret {
     public void resetTurEnc(){
         turEnc.setPosition(0);
     }
-
+    /*
     public void setPIDVariables(){
         kP=6e-5; 
         kI=0;
@@ -124,8 +131,29 @@ public void setPIDController(){
         output *= max;
         controlTur(output);
     }
+    */
 
     public void dumbTurn(double d1){
         turMotor.set(d1);
+    }
+
+    public double calcOut(){
+        double setPoint=0;
+        double actual=vision.getTx();
+        if(Math.abs(actual)<0.5){
+            return(0);
+        }
+        double error=setPoint-actual;
+        double output=kP*error;
+        if(lastError!=0){
+            output+=(error-lastError)*kD;
+        }
+        lastError=error;
+        output=Math.max(-1, Math.min(output,1));
+        return(output);
+    }
+
+    public void autoTur(){
+        dumbTurn(calcOut());
     }
 }

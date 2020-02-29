@@ -30,6 +30,7 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   double delay=0.0;
+  double driveTime=2.0;
 
   private Joystick driveStick=new Joystick(0);
   private Joystick opStick=new Joystick(1);
@@ -39,6 +40,7 @@ public class Robot extends TimedRobot {
   Intake intake=new Intake();
   Elevator elevator=new Elevator();
   Vision vision=new Vision();
+  ElapsedTimer timer=new ElapsedTimer();
   /*
   private final I2C.Port i2cPort=I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor=new ColorSensorV3(i2cPort);
@@ -59,20 +61,21 @@ public class Robot extends TimedRobot {
     //colorMatcher.addColorMatch(kGreenTarget);
     //colorMatcher.addColorMatch(kRedTarget);
     //colorMatcher.addColorMatch(kYellowTarget);
-    /*
+    
     turret.setTurMotor();
+    /*
     turret.turMotor.restoreFactoryDefaults();
     turret.setPIDVariables();
     turret.setPIDController();
     turret.putPIDOnSmart();
     */
     launcher.setLaunMotor();
+    /*
     launcher.launMotor.restoreFactoryDefaults();
     launcher.setPIDVariables();
     launcher.setPIDController();
     launcher.putPIDOnSmart();
-
-    vision.ledOff();
+    */
   }
 
   @Override
@@ -97,32 +100,35 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    launcher.resetLaunEnc();
-    turret.resetTurEnc();
+    //launcher.resetLaunEnc();
+    //turret.resetTurEnc();
     m_autoSelected = m_chooser.getSelected();
     m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
     double kDelay=SmartDashboard.getNumber("Delay", 0.0);
+    timer.start();
     //double start=current time circa start;
   }
 
   @Override
   public void autonomousPeriodic() {
     //double curTime=periodically records time-start;
-    if(true/*(curTime>delay)&&(curTime<delay+driveTime)*/){
+    if((timer.hasElapsed()>delay)&&(timer.hasElapsed()<driveTime+delay)){
       Drivetrain.move(0.5, 0);
+    }else{
+      Drivetrain.move(0,0);
     }
   }
 
   @Override
   public void teleopInit(){
-    launcher.resetLaunEnc();
-    turret.resetTurEnc();
+    //launcher.resetLaunEnc();
+    //turret.resetTurEnc();
   }
   @Override
   public void teleopPeriodic() {
-    turret.getFromDash();
-    launcher.getFromDash();
+    //turret.getFromDash();
+    //launcher.getFromDash();
 
     elevator.controlEle(opStick.getRawButton(1), opStick.getY());
     intake.intakeRead(opStick);
@@ -137,7 +143,20 @@ public class Robot extends TimedRobot {
     */
 
     launcher.dumbLaunch(opStick.getRawButton(2));
-    //turret.dumbTurn(opStick.getZ());
+    System.out.println("Velocity: "+launcher.launEnc.getVelocity());
+
+    if(opStick.getRawButton(9999999)){
+      vision.ledOn();
+      turret.autoTur();  
+    }else{
+      vision.ledOff();
+      if(Math.abs(opStick.getZ())>0.12){
+        turret.dumbTurn(opStick.getZ());
+      }else{
+        turret.dumbTurn(0);
+      }
+    }
+    
 
     /*
     if(opStick.getRawButton(10)){
@@ -159,9 +178,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {    
-    //Turret.getFromDash();
-    //Turret.controlTur(pos);
-    launcher.getFromDash();
-    launcher.controlLaun(0.5);
+    System.out.println(opStick.getZ());
   }
 }

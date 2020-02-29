@@ -4,6 +4,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -11,19 +12,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Launcher {
     private final int launID=1;
     
-    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput,maxRPM;
+    //public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput,maxRPM;
     public double p,i,d,iz,ff,max,min;
 
     public CANSparkMax launMotor;
     private CANPIDController launPID;
-    private CANEncoder launEnc;
+    public CANEncoder launEnc;
 
     public void setLaunMotor(){
         launMotor=new CANSparkMax(launID, MotorType.kBrushless);
+        launMotor.setIdleMode(IdleMode.kCoast);
         launPID=launMotor.getPIDController();
+        launPID.setSmartMotionMaxAccel(-200, 0);
+        launPID.setP(0.001);
+        launPID.setD(0.005);
+        launPID.setFF(0.00158);
+        launPID.setDFilter(0.08);
+        launPID.setSmartMotionMaxVelocity(10000, 0);
         launEnc=launMotor.getEncoder();
     }
 
+    /*
     public void resetLaunEnc(){
         launEnc.setPosition(0);
     }
@@ -103,10 +112,15 @@ public class Launcher {
         SmartDashboard.putNumber("SetPoint", setPoint);
         SmartDashboard.putNumber("ProcessVariable", launEnc.getPosition());
     }
+    */
 
     public void dumbLaunch(boolean b1){
         if(b1){
-            launMotor.set(-0.8);
+            launPID.setReference(-5000, ControlType.kSmartMotion);
+            //launMotor.
+        }else{
+            launPID.setReference(0, ControlType.kDutyCycle);
         }
     }
+
 }

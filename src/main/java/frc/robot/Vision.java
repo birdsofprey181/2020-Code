@@ -19,13 +19,15 @@ public class Vision{
 
     float Kp = -0.1f;  // Proportional control constant
 
+    public double getTx(){
+        return(x);
+    }
+
     public void ledOn() {
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+        table.getEntry("pipeline").setNumber(1);
     }
     public void ledOff() {
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+        table.getEntry("pipeline").setNumber(0);
     }
 
     public void lightToggle(boolean b1){
