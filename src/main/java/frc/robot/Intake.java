@@ -12,35 +12,35 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Intake{
     //I don't know what this is below but its kinda cool and a template for later?
-    //private static final int leftID=3;
-    //private static final int rightID=4;
+    //private  final int leftID=3;
+    //private  final int rightID=4;
     /*
-    private static CANSparkMax leftIn=new CANSparkMax(2, MotorType.kBrushless);
-    private static CANSparkMax rightIn=new CANSparkMax(3, MotorType.kBrushless);
+    private  CANSparkMax leftIn=new CANSparkMax(2, MotorType.kBrushless);
+    private  CANSparkMax rightIn=new CANSparkMax(3, MotorType.kBrushless);
     
-    public static void leftBin(boolean b1){if(b1){leftIn.set(0.5);}else{leftIn.set(0);}}
-    public static void rightBin(boolean b1){if(b1){rightIn.set(0.5);}else{rightIn.set(0);}}
+    public  void leftBin(boolean b1){if(b1){leftIn.set(0.5);}else{leftIn.set(0);}}
+    public  void rightBin(boolean b1){if(b1){rightIn.set(0.5);}else{rightIn.set(0);}}
     */
     //Actual code for Intake below
 
-    private static VictorSP intakeWheels=new VictorSP(4);
-    private static Spark intakeWrist=new Spark(5);
+    private VictorSP intakeWheels=new VictorSP(4);
+    private Spark intakeWrist=new Spark(5);
 
-    private static VictorSP conveyMotor=new VictorSP(6);
-    private static VictorSP hopperMotor=new VictorSP(7);
+    private VictorSP conveyMotor=new VictorSP(6);
+    private VictorSP hopperMotor=new VictorSP(7);
 
-    static Counter intakeCounter = new Counter(new DigitalInput(2));
-    private static int position = 0;
+     Counter intakeCounter = new Counter(new DigitalInput(2));
+    private int position = 0;
 
-    public static void moveConvey(boolean b){
+    public void moveConvey(boolean b){
         if(b){
-            conveyMotor.set(-1);
+            conveyMotor.set(-0.5);
         }else{
             conveyMotor.set(0);
         }
     }
 
-    public static void moveHopper(boolean b){
+    public void moveHopper(boolean b){
         if(b){
             hopperMotor.set(-1);
         }else{
@@ -48,7 +48,7 @@ public class Intake{
         }
     }
 
-    public static void intakeWrist(boolean b1, double d1){
+    public void intakeWrist(boolean b1, double d1){
         if(b1){
             intakeWrist.set(d1);
         }else{
@@ -56,7 +56,7 @@ public class Intake{
         }
     }
 
-    public static void intakeWheels(boolean b1){
+    public void intakeWheels(boolean b1){
         if(b1){
             intakeWheels.set(-1);
         }else{
@@ -64,7 +64,7 @@ public class Intake{
         }
     }   
 
-    public static void intakeRead(Joystick opStick){
+    public void intakeRead(Joystick opStick){
         int povValue = opStick.getPOV(0);
         if(povValue == 0){
             position += intakeCounter.get();
@@ -75,16 +75,16 @@ public class Intake{
         intakeCounter.reset();
     }
 
-    public static void intakeReset(){
+    public void intakeReset(){
         intakeCounter.reset();
     }
 
-    public static void controlIntake(Joystick opStick) {
+    public void controlIntake(Joystick opStick) {
         int povValue = opStick.getPOV(0);
         if (povValue == 0) {
-            intakeWrist(true, 0.8);
+            intakeWrist(true, -1);
         } else if (povValue == 180) {
-            intakeWrist(true, -1.0); 
+            intakeWrist(true, 0.8); 
         } else if (povValue == -1) {
             intakeWrist(false, 0.0);
         }

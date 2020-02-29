@@ -5,12 +5,12 @@ import edu.wpi.first.wpilibj.Relay;
 
 public class Elevator{
 
-    static VictorSP eleMotorL=new VictorSP(2);
-    static VictorSP eleMotorR=new VictorSP(3);
+     VictorSP eleMotorL=new VictorSP(2);
+     VictorSP eleMotorR=new VictorSP(3);
 
-    static Relay lock=new Relay(0);
+     Relay lock=new Relay(0);
 
-    public static void controlEle(boolean b1, double d1){
+    public void controlEle(boolean b1, double d1){
         if(b1){
             eleMotorL.set(d1);
             eleMotorR.set(d1);
@@ -20,7 +20,7 @@ public class Elevator{
         }
     }
     
-    public static void controlLock(boolean b1){
+    public void controlLock(boolean b1){
         if(b1){
             lock.set(Relay.Value.kForward);
         }else{

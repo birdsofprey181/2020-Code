@@ -6,29 +6,37 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Turret {
     private static final int turID=2;
     
-    public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
-    public static double p,i,d,iz,ff,max,min,rotations;
+    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+    public double p,i,d,iz,ff,max,min,rotations;
 
-    public static CANSparkMax turMotor;
-    private static CANPIDController turPID;
-    private static CANEncoder turEnc;
+    public CANSparkMax turMotor;
+    private CANPIDController turPID;
+    private CANEncoder turEnc;
 
-    public static void setTurMotor(){
+    NetworkTable vision_table = NetworkTableInstance.getDefault().getTable("limelight");
+
+    NetworkTableEntry tarValid = vision_table.getEntry("tv");
+    NetworkTableEntry tarOff = vision_table.getEntry("tx");
+
+    public void setTurMotor(){
         turMotor=new CANSparkMax(turID, MotorType.kBrushless);
         turPID=turMotor.getPIDController();
         turEnc=turMotor.getEncoder();
     }
 
-    public static void resetTurEnc(){
+    public void resetTurEnc(){
         turEnc.setPosition(0);
     }
 
-    public static void setPIDVariables(){
+    public void setPIDVariables(){
         kP=6e-5; 
         kI=0;
         kD=0; 
@@ -36,10 +44,9 @@ public class Turret {
         kFF=0.000015; 
         kMaxOutput=1; 
         kMinOutput=-1;
-        maxRPM=5700;
     }
 
-public static void setPIDController(){
+public void setPIDController(){
         turPID.setP(kP);
         turPID.setI(kI);
         turPID.setD(kD);
@@ -48,7 +55,7 @@ public static void setPIDController(){
         turPID.setOutputRange(kMinOutput, kMaxOutput);
     }
 
-    public static void putPIDOnSmart(){
+    public void putPIDOnSmart(){
         SmartDashboard.putNumber("Tur P Gain", kP);
         SmartDashboard.putNumber("Tur I Gain", kI);
         SmartDashboard.putNumber("Tur D Gain", kD);
@@ -59,7 +66,7 @@ public static void setPIDController(){
         SmartDashboard.putNumber("Tur Set Rotations", 0);
     }
 
-    public static void getFromDash(){
+    public void getFromDash(){
         p=SmartDashboard.getNumber("Tur P Gain", 0);
         i=SmartDashboard.getNumber("Tur I Gain", 0);
         d=SmartDashboard.getNumber("Tur D Gain", 0);
@@ -70,7 +77,7 @@ public static void setPIDController(){
         rotations = SmartDashboard.getNumber("Tur Set Rotations", 0);
     }
 
-    public static void setFromDash(){
+    public void setFromDash(){
         if(p != kP){
             turPID.setP(p);
             kP = p; 
@@ -98,10 +105,27 @@ public static void setPIDController(){
         }
     }
 
-    public static void controlTur(double pos){
+    public void controlTur(double pos){
         turPID.setReference(pos, ControlType.kPosition);
         
         SmartDashboard.putNumber("Tur SetPoint", rotations);
         SmartDashboard.putNumber("Tur ProcessVariable", turEnc.getPosition());
+    }
+
+    public void turAlign(){
+        //converts tx (degrees) to error (rotations)
+        double error=tarOff.getDouble(0)/360;
+        controlTur(error);
+    }
+
+    public void vision_align() {
+        double output = 0;
+        output = tarOff.getDouble(0) * p;
+        output *= max;
+        controlTur(output);
+    }
+
+    public void dumbTurn(double d1){
+        turMotor.set(d1);
     }
 }

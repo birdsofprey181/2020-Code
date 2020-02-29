@@ -9,26 +9,26 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Launcher {
-    private static final int launID=1;
+    private final int launID=1;
     
-    public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput,maxRPM;
-    public static double p,i,d,iz,ff,max,min;
+    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput,maxRPM;
+    public double p,i,d,iz,ff,max,min;
 
-    public static CANSparkMax launMotor;
-    private static CANPIDController launPID;
-    private static CANEncoder launEnc;
+    public CANSparkMax launMotor;
+    private CANPIDController launPID;
+    private CANEncoder launEnc;
 
-    public static void setLaunMotor(){
+    public void setLaunMotor(){
         launMotor=new CANSparkMax(launID, MotorType.kBrushless);
         launPID=launMotor.getPIDController();
         launEnc=launMotor.getEncoder();
     }
 
-    public static void resetLaunEnc(){
+    public void resetLaunEnc(){
         launEnc.setPosition(0);
     }
 
-    public static void setPIDVariables(){
+    public void setPIDVariables(){
         kP=6e-5; 
         kI=0;
         kD=0; 
@@ -39,7 +39,7 @@ public class Launcher {
         maxRPM=5800;
     }
 
-    public static void setPIDController(){
+    public void setPIDController(){
         launPID.setP(kP);
         launPID.setI(kI);
         launPID.setD(kD);
@@ -48,7 +48,7 @@ public class Launcher {
         launPID.setOutputRange(kMinOutput, kMaxOutput);
     }
 
-    public static void putPIDOnSmart(){
+    public void putPIDOnSmart(){
         SmartDashboard.putNumber("Launcher P Gain", kP);
         SmartDashboard.putNumber("Launcher I Gain", kI);
         SmartDashboard.putNumber("Launcher D Gain", kD);
@@ -58,7 +58,7 @@ public class Launcher {
         SmartDashboard.putNumber("Launcher Min Output", kMinOutput);
     }
 
-    public static void getFromDash(){
+    public void getFromDash(){
         p=SmartDashboard.getNumber("Launcher P Gain", 0);
         i=SmartDashboard.getNumber("Launcher I Gain", 0);
         d=SmartDashboard.getNumber("Launcher D Gain", 0);
@@ -68,7 +68,7 @@ public class Launcher {
         min=SmartDashboard.getNumber("Launcher Min Output", 0);
     }
 
-    public static void setFromDash(){
+    public void setFromDash(){
         if(p != kP){
             launPID.setP(p);
             kP = p; 
@@ -96,11 +96,17 @@ public class Launcher {
         }
     }
 
-    public static void controlLaun(double rpmPer){
+    public void controlLaun(double rpmPer){
         double setPoint=rpmPer*maxRPM;
         launPID.setReference(setPoint, ControlType.kVelocity);
         
         SmartDashboard.putNumber("SetPoint", setPoint);
         SmartDashboard.putNumber("ProcessVariable", launEnc.getPosition());
+    }
+
+    public void dumbLaunch(boolean b1){
+        if(b1){
+            launMotor.set(-0.8);
+        }
     }
 }

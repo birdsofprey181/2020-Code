@@ -12,12 +12,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.I2C;
+//import edu.wpi.first.wpilibj.util.Color;
+//import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 
-import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorSensorV3;
+//import com.revrobotics.ColorMatch;
+//import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -29,8 +29,16 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  double delay=0.0;
+
   private Joystick driveStick=new Joystick(0);
   private Joystick opStick=new Joystick(1);
+
+  Turret turret=new Turret();
+  Launcher launcher=new Launcher();
+  Intake intake=new Intake();
+  Elevator elevator=new Elevator();
+  Vision vision=new Vision();
   /*
   private final I2C.Port i2cPort=I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor=new ColorSensorV3(i2cPort);
@@ -45,23 +53,26 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Do Nothing", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    SmartDashboard.putNumber("Delay", delay);
 
     //colorMatcher.addColorMatch(kBlueTarget);
     //colorMatcher.addColorMatch(kGreenTarget);
     //colorMatcher.addColorMatch(kRedTarget);
     //colorMatcher.addColorMatch(kYellowTarget);
-    
-    Turret.setTurMotor();
-    Turret.turMotor.restoreFactoryDefaults();
-    Turret.setPIDVariables();
-    Turret.setPIDController();
-    Turret.putPIDOnSmart();
-    
-    Launcher.setLaunMotor();
-    Launcher.launMotor.restoreFactoryDefaults();
-    Launcher.setPIDVariables();
-    Launcher.setPIDController();
-    Launcher.putPIDOnSmart();
+    /*
+    turret.setTurMotor();
+    turret.turMotor.restoreFactoryDefaults();
+    turret.setPIDVariables();
+    turret.setPIDController();
+    turret.putPIDOnSmart();
+    */
+    launcher.setLaunMotor();
+    launcher.launMotor.restoreFactoryDefaults();
+    launcher.setPIDVariables();
+    launcher.setPIDController();
+    launcher.putPIDOnSmart();
+
+    vision.ledOff();
   }
 
   @Override
@@ -81,66 +92,76 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
 
-    //SmartDashboard.putNumber("Launcher RPM%", rpm);
+    //SmartDashboard.putNumber("launcher RPM%", rpm);
   }
 
   @Override
   public void autonomousInit() {
-    Launcher.resetLaunEnc();
-    Turret.resetTurEnc();
+    launcher.resetLaunEnc();
+    turret.resetTurEnc();
     m_autoSelected = m_chooser.getSelected();
     m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    double kDelay=SmartDashboard.getNumber("Delay", 0.0);
+    //double start=current time circa start;
   }
 
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
+    //double curTime=periodically records time-start;
+    if(true/*(curTime>delay)&&(curTime<delay+driveTime)*/){
+      Drivetrain.move(0.5, 0);
     }
   }
 
   @Override
   public void teleopInit(){
-    Launcher.resetLaunEnc();
-    Turret.resetTurEnc();
+    launcher.resetLaunEnc();
+    turret.resetTurEnc();
   }
   @Override
   public void teleopPeriodic() {
-    Turret.getFromDash();
-    Launcher.getFromDash();
+    turret.getFromDash();
+    launcher.getFromDash();
 
-    Elevator.controlEle(opStick.getRawButton(1), opStick.getY());
-    Intake.intakeRead(opStick);
-    Intake.controlIntake(opStick);
-    //Intake.intakeWrist(opStick.getRawButton(1), opStick.getY());
-    Intake.intakeWheels(opStick.getRawButton(7));
+    elevator.controlEle(opStick.getRawButton(1), opStick.getY());
+    intake.intakeRead(opStick);
+    intake.controlIntake(opStick);
+    //intake.intakeWrist(opStick.getRawButton(1), opStick.getY());
+    intake.intakeWheels(opStick.getRawButton(7));
 
+    /*
     if(opStick.getRawButton(2)){
-      Launcher.controlLaun((opStick.getThrottle()/2)+0.5);
+      launcher.controlLaun((-opStick.getThrottle()/2)+0.5);
     }
+    */
 
-    Turret.controlTur(opStick.getZ()*135);
+    launcher.dumbLaunch(opStick.getRawButton(2));
+    //turret.dumbTurn(opStick.getZ());
 
-    Intake.moveConvey(opStick.getRawButton(9));
-    Intake.moveHopper(opStick.getRawButton(11));
+    /*
+    if(opStick.getRawButton(10)){
+      turret.turAlign();
+    }
+  
+    turret.controlTur(opStick.getZ()*135);
+    */
+
+    intake.moveConvey(opStick.getRawButton(9));
+    intake.moveHopper(opStick.getRawButton(11));
 
     Drivetrain.move(-driveStick.getY(), driveStick.getZ());
 
-    Elevator.controlLock(opStick.getRawButton(12));
+    elevator.controlLock(opStick.getRawButton(12));
+
+    vision.lightToggle(opStick.getRawButton(10));
   }
 
   @Override
   public void testPeriodic() {    
     //Turret.getFromDash();
     //Turret.controlTur(pos);
-    Launcher.getFromDash();
-    Launcher.controlLaun(0.5);
+    launcher.getFromDash();
+    launcher.controlLaun(0.5);
   }
 }
