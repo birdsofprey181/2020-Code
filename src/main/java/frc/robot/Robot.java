@@ -24,8 +24,9 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
+  private static final String kDefaultAuto = "Do Nothing";
+  private static final String scoShoAuto ="Scoot and Shoot";
+  private static final String moveAuto="Just Move";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
@@ -41,6 +42,12 @@ public class Robot extends TimedRobot {
   Elevator elevator=new Elevator();
   Vision vision=new Vision();
   ElapsedTimer timer=new ElapsedTimer();
+  ElapsedTimer hopTime=new ElapsedTimer();
+
+  @SuppressWarnings("unused")
+  private Camera cam = new Camera("stream");
+
+  int i1=0;
   /*
   private final I2C.Port i2cPort=I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor=new ColorSensorV3(i2cPort);
@@ -53,7 +60,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_chooser.setDefaultOption("Do Nothing", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.addOption("Scoot and Shoot", scoShoAuto);
+    m_chooser.addOption("Just Move",moveAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     SmartDashboard.putNumber("Delay", delay);
 
@@ -98,7 +106,7 @@ public class Robot extends TimedRobot {
     System.out.println(turret.turEnc.getPosition());
     System.out.println("Z: "+opStick.getZ());
     System.out.println("T: "+opStick.getThrottle());
-    //SmartDashboard.putNumber("launcher RPM%", rpm);
+    SmartDashboard.putNumber("Launcher RPM%", launcher.launEnc.getVelocity());
   }
 
   @Override
@@ -109,17 +117,42 @@ public class Robot extends TimedRobot {
     m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
     double kDelay=SmartDashboard.getNumber("Delay", 0.0);
+    if(kDelay!=delay){
+      delay=kDelay;
+    }
+    int hop=-1;
     timer.start();
-    //double start=current time circa start;
   }
 
   @Override
   public void autonomousPeriodic() {
-    //double curTime=periodically records time-start;
-    if((timer.hasElapsed()>delay)&&(timer.hasElapsed()<driveTime+delay)){
-      Drivetrain.move(0.5, 0);
-    }else{
-      Drivetrain.move(0,0);
+    switch (m_autoSelected) {
+      case scoShoAuto:
+        TimeInterval intakeT=new TimeInterval(4.0, timer.hasElapsed());
+        TimeInterval ballT=new TimeInterval(15.0, timer.hasElapsed());
+        TimeInterval hop1=new TimeInterval(14.0, 15.0, timer.hasElapsed());
+        System.out.println(timer.hasElapsed());
+        if(intakeT.isInterval()){
+          intake.intakeWrist(true, -1);
+          Drivetrain.move(0.5,0);
+        }else if(ballT.isInterval()){
+          launcher.dumbLaunch2(true);
+          intake.moveConvey(true);
+          if(hop1.isInterval()){
+          intake.moveHopper(true);
+          }
+        }
+        break;
+      case moveAuto:
+        TimeInterval moveT=new TimeInterval(2.0, timer.hasElapsed());
+        if(moveT.isInterval()){
+          Drivetrain.move(0.5,0);
+        }
+        break;
+      case kDefaultAuto:
+      default:
+        //do nothing :|
+        break;
     }
   }
 
@@ -145,7 +178,7 @@ public class Robot extends TimedRobot {
     }
     */
 
-    launcher.dumbLaunch(opStick.getRawButton(2), (-opStick.getThrottle()/2)+0.5);
+    launcher.dumbLaunch(opStick.getRawButton(4), (-opStick.getThrottle()/2)+0.5);
     System.out.println("Velocity: "+launcher.launEnc.getVelocity());
 
     if(opStick.getRawButton(5)){
@@ -153,7 +186,7 @@ public class Robot extends TimedRobot {
       turret.autoTur();  
     }else{
       vision.ledOff();
-      if(Math.abs(opStick.getZ())>0.3){
+      if(Math.abs(opStick.getZ())>0.5){
         turret.dumbTurn(-opStick.getZ());
       }else{
         turret.dumbTurn(0);
@@ -177,6 +210,8 @@ public class Robot extends TimedRobot {
     elevator.controlLock(opStick.getRawButton(12));
 
     vision.lightToggle(opStick.getRawButton(10));
+
+    launcher.dumbLaunch2(opStick.getRawButton(2));
   }
 
   @Override

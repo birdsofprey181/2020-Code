@@ -116,8 +116,17 @@ public class Launcher {
     }
     */
 
+    public void dumbLaunch2(boolean b1){
+        if(b1){
+            launPID.setReference(-4726, ControlType.kVelocity);
+        }else{
+            launPID.setReference(0, ControlType.kDutyCycle);
+        }
+    }
+
     public void dumbLaunch(boolean b1, double d1){
         double launPow=3000+(d1*2000);
+        SmartDashboard.putNumber("RPM", launPow);
         if(b1){
             launPID.setReference(-launPow, ControlType.kVelocity);
             System.out.println("Launcher Power: "+launPow);
