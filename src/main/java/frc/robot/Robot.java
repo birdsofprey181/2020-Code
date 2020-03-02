@@ -103,9 +103,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
 
-    System.out.println(turret.turEnc.getPosition());
-    System.out.println("Z: "+opStick.getZ());
-    System.out.println("T: "+opStick.getThrottle());
+    //System.out.println(turret.turEnc.getPosition());
+    //System.out.println("Z: "+opStick.getZ());
+    //System.out.println("T: "+opStick.getThrottle());
     SmartDashboard.putNumber("Launcher RPM%", launcher.launEnc.getVelocity());
   }
 
@@ -126,26 +126,45 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    System.out.println("Auto selected: " + m_autoSelected);
+    /*
+    if(timer.hasElapsed()<4.0){
+      Drivetrain.move(0.5,0);
+    }
+    */
+    if(timer.hasElapsed()>delay&&timer.hasElapsed()<4.0+delay){
+      intake.intakeWrist(true, -1);
+      Drivetrain.move(0.5,0);
+    }else if(timer.hasElapsed()<15.0){
+      launcher.dumbLaunch2(true);
+      intake.moveConvey(true);
+      if(Math.floor(timer.hasElapsed())%2==0){
+        intake.moveHopper(true);
+      }
+    }
+    /*
+    
+    \
     switch (m_autoSelected) {
       case scoShoAuto:
-        TimeInterval intakeT=new TimeInterval(4.0, timer.hasElapsed());
-        TimeInterval ballT=new TimeInterval(15.0, timer.hasElapsed());
-        TimeInterval hop1=new TimeInterval(14.0, 15.0, timer.hasElapsed());
+        // TimeInterval intakeT=new TimeInterval(4.0, timer.hasElapsed());
+        // TimeInterval ballT=new TimeInterval(15.0, timer.hasElapsed());
+        // TimeInterval hop1=new TimeInterval(14.0, 15.0, timer.hasElapsed());
         System.out.println(timer.hasElapsed());
-        if(intakeT.isInterval()){
+        if(timer.hasElapsed()<4.0){
           intake.intakeWrist(true, -1);
           Drivetrain.move(0.5,0);
-        }else if(ballT.isInterval()){
+        }else if(timer.hasElapsed()<15.0){
           launcher.dumbLaunch2(true);
           intake.moveConvey(true);
-          if(hop1.isInterval()){
+          if(timer.hasElapsed()>14.0&&timer.hasElapsed()<15.0){
           intake.moveHopper(true);
           }
         }
         break;
       case moveAuto:
-        TimeInterval moveT=new TimeInterval(2.0, timer.hasElapsed());
-        if(moveT.isInterval()){
+        //TimeInterval moveT=new TimeInterval(2.0, timer.hasElapsed());
+        if(timer.hasElapsed()<4.0){
           Drivetrain.move(0.5,0);
         }
         break;
@@ -154,6 +173,7 @@ public class Robot extends TimedRobot {
         //do nothing :|
         break;
     }
+    */
   }
 
   @Override
@@ -179,7 +199,6 @@ public class Robot extends TimedRobot {
     */
 
     launcher.dumbLaunch(opStick.getRawButton(4), (-opStick.getThrottle()/2)+0.5);
-    System.out.println("Velocity: "+launcher.launEnc.getVelocity());
 
     if(opStick.getRawButton(5)){
       vision.ledOn();
